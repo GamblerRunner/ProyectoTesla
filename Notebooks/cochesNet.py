@@ -33,6 +33,17 @@ class AnuncioVehiculo:
     def __hash__(self):
         return hash((self.titulo, self.enlace))
     
+    def to_dict(self):
+        return {
+            "Titulo": self.titulo,
+            "Precio": self.precio,
+            "Ubicación": self.ubicacion,
+            "Tipo de vehículo": self.tipo_vehiculo,
+            "Año": self.ano,
+            "Kilometros": self.kilometraje,
+            "Link": self.enlace
+        }
+    
 def html_to_av(html_code) -> AnuncioVehiculo:
     soup = BeautifulSoup(html_code, 'html.parser')
 
@@ -55,9 +66,9 @@ with SB(
     ad_block=True,
 ) as sb:
     arry_coches = []
-    columns = ["Titulo", "Marca", "Precio", "Provincia", "Motor", "Año", "Kilometros", "Link"]
+    columns = ["Titulo", "Precio", "Ubicación", "Tipo de vehículo", "Año", "Kilometros", "Link"]
     df = pd.DataFrame(columns=columns)
-    for num_pag in range(5):
+    for num_pag in range(20):
         sb.activate_cdp_mode(f'https://www.coches.net/search/?MakeIds[0]=1354&ModelIds[0]=0&Versions[0]=&pg={num_pag}')
         if num_pag == 0:
             sb.cdp.click('#didomi-notice-agree-button', timeout=20)
@@ -71,9 +82,19 @@ with SB(
                 pass
         count += len(arry_coches)
         print(f"Coches obtenidos actualmente: {count}")
+    for coche in arry_coches:
+        print(coche)
 
     arry_coches_sin_duplicados = list(set(arry_coches))
-    line = pd.DataFrame(arry_coches_sin_duplicados, columns=columns)
+    print(arry_coches_sin_duplicados)
+
+    # Convertir a lista de diccionarios
+    datos = [coche.to_dict() for coche in arry_coches_sin_duplicados]
+
+    # Crear el DataFrame
+    line = pd.DataFrame(datos, columns=columns)
+
+    #line = pd.DataFrame(arry_coches_sin_duplicados, columns=columns)
     ruta="cochesNet.csv"
     line.to_csv(ruta, index=False, mode='a', sep=",")
 
