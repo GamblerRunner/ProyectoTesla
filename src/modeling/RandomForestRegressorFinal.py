@@ -11,10 +11,9 @@ hiperparametros = {
 }
 
 def obtener_df():
-    df = pd.read_csv('./data/full_data.csv')
+    df = pd.read_csv('./data/full_cleaned_data.csv')
     df.drop(columns=["Unnamed: 0"], inplace=True)
-    #df.drop_duplicates(inplace=True)
-    df = pd.get_dummies(data=df, columns=['sell_type', 'car_type'], drop_first=True)
+    df.drop_duplicates(inplace=True)
     return df
 
 
@@ -36,4 +35,5 @@ predicciones = rfr.predict(X_test)
 
 X_test['predicted_price'] = predicciones
 X_test['real_price'] = df.loc[X_test.index, 'price']
-print(X_test)
+
+X_test.to_csv('./src/modeling/modeling_results.csv')
