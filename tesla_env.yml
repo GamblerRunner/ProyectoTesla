@@ -13,3 +13,4 @@ dependencies:
   - beautifulsoup4=4.12.3
   - selenium=4.24.0
   - scikit-learn=1.5.2
+  - xgboost=2.1.3
